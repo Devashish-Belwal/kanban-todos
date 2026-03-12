@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/auth';
 import * as sharedController from '../controllers/sharedController';
 
 const router = Router();
