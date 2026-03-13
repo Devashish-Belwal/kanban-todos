@@ -39,8 +39,6 @@ export async function requireAuthOrShareEdit(
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
-  const token = authHeader.slice(7);
-
   try {
     const board = await prisma.board.findUnique({
       where: { shareToken: token },
