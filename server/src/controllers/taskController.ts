@@ -36,7 +36,15 @@ export const createTask= asyncHandler(async (req,res)=> {
   res.status(201).json(task);
 })
 
-export const updateTask= asyncHandler(async (req,res)=> {
+export const updateTask = asyncHandler(async (req, res) => {
+  console.log('updateTask hit:', {
+    boardId: req.params.boardId,
+    taskId: req.params.taskId,
+    body: req.body,
+    user: req.user,
+    shareBoard: req.shareBoard,
+  });
+
   const { boardId, taskId } = req.params;
 
   const hasAccess = await verifyBoardAccess(req, boardId);
