@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 interface User {
   id: string;
   email: string;
@@ -21,15 +23,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // On app load, check if the user is already logged in
-    axios.get('/auth/me', { withCredentials: true })
+    axios.get(`${API_URL}/auth/me`, { withCredentials: true })
       .then((res) => setUser(res.data))
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
   }, []);
 
   const logout = () => {
-    axios.get('/auth/logout', { withCredentials: true })
+    axios.get(`${API_URL}/auth/logout`, { withCredentials: true })
       .then(() => {
         setUser(null);
         window.location.href = '/';
