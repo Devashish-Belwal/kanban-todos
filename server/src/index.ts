@@ -14,6 +14,7 @@ import taskRoutes from './routes/tasks';
 import sharedRoutes from './routes/shared';
 
 const app = express();
+app.set('trust proxy', 1); // ← add this line
 const PORT = process.env.PORT || 3001;
 const PgSession = connectPgSimple(session);
 
