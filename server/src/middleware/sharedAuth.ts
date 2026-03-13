@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 
-// Extends req with share context so controllers can use it
 declare global {
   namespace Express {
     interface Request {
@@ -15,30 +14,33 @@ export async function requireAuthOrShareEdit(
   res: Response,
   next: NextFunction
 ) {
-  // If the user is logged in normally, let them through
+  // If logged in via session, allow through
   if (req.isAuthenticated()) return next();
 
-  // Check for share token in the Authorization header
-  // Frontend will send: Authorization: Bearer <shareToken>
+  // Check Authorization header for share token
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
   const token = authHeader.slice(7);
-  const board = await prisma.board.findUnique({
-    where: { shareToken: token },
-  });
 
-  if (!board || board.sharePermission !== 'EDIT') {
-    return res.status(403).json({ error: 'Insufficient permissions' });
+  try {
+    const board = await prisma.board.findUnique({
+      where: { shareToken: token },
+    });
+
+    if (!board || board.sharePermission !== 'EDIT') {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+
+    if (req.params.boardId && req.params.boardId !== board.id) {
+      return res.status(403).json({ error: 'Token does not match this board' });
+    }
+
+    req.shareBoard = { id: board.id, permission: 'EDIT' };
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  // Also verify the boardId in the URL matches the token's board
-  if (req.params.boardId && req.params.boardId !== board.id) {
-    return res.status(403).json({ error: 'Token does not match this board' });
-  }
-
-  req.shareBoard = { id: board.id, permission: 'EDIT' };
-  next();
 }
