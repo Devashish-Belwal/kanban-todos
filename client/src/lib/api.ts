@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_URL}/api`,
   withCredentials: true,
 });
 
@@ -13,11 +15,8 @@ api.interceptors.response.use(
       window.location.href = '/';
       return Promise.reject(error);
     }
-
-    // Show error toast for all other failures
     const message = error.response?.data?.error || 'Something went wrong';
     toast.error(message);
-
     return Promise.reject(error);
   }
 );
