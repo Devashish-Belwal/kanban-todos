@@ -29,6 +29,7 @@ export default function SharedBoardPage() {
   // Shared board API — sends token in Authorization header
   const sharedApi = axios.create({
     baseURL: `${API_URL}/api`,
+    withCredentials: true,
     headers: { Authorization: `Bearer ${token}` },
   });
 
