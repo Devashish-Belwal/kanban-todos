@@ -24,8 +24,17 @@ export async function requireAuthOrShareEdit(
   // If logged in via session, allow through
   if (req.isAuthenticated()) return next();
 
-  // Check Authorization header for share token
+  // Check Authorization header OR query param
   const authHeader = req.headers.authorization;
+  const headerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const queryToken = req.query.shareToken as string | undefined;
+  const token = headerToken || queryToken;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  // Check Authorization header for share token
   if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
