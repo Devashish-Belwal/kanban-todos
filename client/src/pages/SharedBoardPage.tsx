@@ -27,10 +27,16 @@ export default function SharedBoardPage() {
   const [initialStatus, setInitialStatus] = useState<Task['status'] | null>(null);
 
   // Shared board API — sends token in Authorization header
+  // const sharedApi = axios.create({
+  //   baseURL: `${API_URL}/api`,
+  //   withCredentials: true,
+  //   headers: { Authorization: `Bearer ${token}` },
+  // });
+
   const sharedApi = axios.create({
     baseURL: `${API_URL}/api`,
     withCredentials: true,
-    headers: { Authorization: `Bearer ${token}` },
+    params: { shareToken: token }, // ← use query param instead of header
   });
 
   const { data: board, isLoading, isError } = useQuery({
