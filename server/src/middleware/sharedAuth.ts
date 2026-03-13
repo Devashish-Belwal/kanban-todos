@@ -19,6 +19,7 @@ export async function requireAuthOrShareEdit(
   isAuthenticated: req.isAuthenticated(),
   authHeader: req.headers.authorization,
   boardId: req.params.boardId,
+  });
   
   // If logged in via session, allow through
   if (req.isAuthenticated()) return next();
