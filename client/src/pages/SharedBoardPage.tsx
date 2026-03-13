@@ -10,6 +10,8 @@ import { TaskModal } from '../components/kanban/TaskModal';
 import { toUITask, toAPIStatus, toAPIPriority } from '../lib/transforms';
 import type { Task } from '../types/kanban';
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 interface Board {
   id: string;
   title: string;
@@ -26,14 +28,14 @@ export default function SharedBoardPage() {
 
   // Shared board API — sends token in Authorization header
   const sharedApi = axios.create({
-    baseURL: '/api',
+    baseURL: `${API_URL}/api`,
     headers: { Authorization: `Bearer ${token}` },
   });
 
   const { data: board, isLoading, isError } = useQuery({
     queryKey: ['shared', token],
     queryFn: () =>
-      axios.get<Board>(`/api/shared/${token}`).then((r) => r.data),
+      axios.get<Board>(`${API_URL}/api/shared/${token}`).then((r) => r.data),
   });
 
   const tasks: Task[] = (board?.tasks ?? []).map(toUITask);
